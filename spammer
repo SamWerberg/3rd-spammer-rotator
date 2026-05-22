@@ -59,16 +59,37 @@ local function updateCanvas()
 end
 
 local function addBox(defaultText)
+	local holder = Instance.new("Frame")
+	holder.Parent = scroll
+	holder.Size = UDim2.new(1,-10,0,55)
+	holder.BackgroundTransparency = 1
+
 	local box = Instance.new("TextBox")
-	box.Parent = scroll
-	box.Size = UDim2.new(1,-10,0,40)
+	box.Parent = holder
+	box.Size = UDim2.new(1,0,0,40)
 	box.BackgroundColor3 = Color3.fromRGB(45,45,45)
 	box.TextColor3 = Color3.new(1,1,1)
 	box.PlaceholderText = "Message"
 	box.Text = defaultText or ""
 	box.TextScaled = true
 	box.ClearTextOnFocus = false
+	box.TextXAlignment = Enum.TextXAlignment.Left
 	Instance.new("UICorner", box)
+
+	local counter = Instance.new("TextLabel")
+	counter.Parent = holder
+	counter.Size = UDim2.new(1,-5,0,12)
+	counter.Position = UDim2.new(0,0,0,42)
+	counter.BackgroundTransparency = 1
+	counter.Text = "0 Characters"
+	counter.TextColor3 = Color3.fromRGB(180,180,180)
+	counter.Font = Enum.Font.Gotham
+	counter.TextSize = 11
+	counter.TextXAlignment = Enum.TextXAlignment.Right
+
+	box:GetPropertyChangedSignal("Text"):Connect(function()
+		counter.Text = tostring(#box.Text) .. " Characters"
+	end)
 
 	table.insert(textboxes, box)
 
@@ -106,7 +127,7 @@ removeBtn.MouseButton1Click:Connect(function()
 		local lastBox = textboxes[#textboxes]
 
 		if lastBox then
-			lastBox:Destroy()
+			lastBox.Parent:Destroy()
 		end
 
 		table.remove(textboxes, #textboxes)
